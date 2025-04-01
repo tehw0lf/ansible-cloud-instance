@@ -1,0 +1,5 @@
+id_*
+hosts
+.lock
+*_passphrase
+vars.yml
