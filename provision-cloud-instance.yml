@@ -132,11 +132,12 @@
         timeout: 300
         delay: 10
 
-    - name: Remove default user
+    - name: Delete default users and remove home directories
       ansible.builtin.user:
-        name: "{{ default_user }}"
+        name: "{{ item }}"
         state: absent
-        remove: yes
+        remove: true
+      loop: "{{ users_to_remove }}"
 
   pre_tasks:
     - name: Install curl if not present

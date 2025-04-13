@@ -4,6 +4,9 @@ create vars file
 `echo "default_user: ubuntu" > vars.yml`
 `echo "user: tehwolf" >> vars.yml`
 `echo "instance_ip: ip_address" >> vars.yml`
+`echo "users_to_remove:" >> vars.yml`
+`echo "  - opc" >> vars.yml`
+`echo "  - ubuntu" >> vars.yml`
 
 create hosts file
 `echo "[cloud_instance]" > hosts`
