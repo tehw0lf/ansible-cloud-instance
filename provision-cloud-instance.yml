@@ -35,6 +35,13 @@
       community.general.snap:
         name: nano
         classic: true
+      when: arch is "arm64"
+
+    - name: Install nano
+      ansible.builtin.apt:
+        name: nano
+        state: present
+      when: arch is not "arm64"
 
     - name: Install kitty-terminfo
       ansible.builtin.apt:
@@ -131,6 +138,7 @@
       ansible.builtin.user:
         name: github
         group: docker
+      when: arch is "arm64"
 
     - name: Reboot System
       ansible.builtin.reboot:
