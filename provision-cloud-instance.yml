@@ -8,10 +8,6 @@
     - vars.yml
 
   tasks:
-    - name: Generate SSH key
-      ansible.builtin.shell: "bash gen_ssh_key.sh"
-      args:
-        chdir: "{{ ansible_env.PWD }}"
     - name: Remove old known hosts entries by IP
       ansible.builtin.command: sed '/^{{ instance_ip }}/d' -i /home/{{ user }}/.ssh/known_hosts
 
@@ -109,13 +105,14 @@
     - name: Create SSH directory
       ansible.builtin.command: mkdir -p /home/{{ user }}/.ssh
 
-    - name: Copy public SSH key to authorized_keys
+    - name: Copy authorized_keys from provisioned user
       ansible.builtin.copy:
-        src: files/id_ed25519.pub
+        src: /home/{{ default_user }}/.ssh/authorized_keys
         dest: /home/{{ user }}/.ssh/authorized_keys
         owner: "{{ user }}"
         group: "{{ user }}"
         mode: "0600"
+        remote_src: yes
 
     - name: Copy SSH configuration
       ansible.builtin.template:

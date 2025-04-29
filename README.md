@@ -12,5 +12,7 @@ create hosts file
 `echo "[cloud_instance]" > hosts`
 `echo "ubuntu ansible_ssh_host=ip_address ansible_user=tehwolf ansible_ssh_private_key_file=default_cloud_instance_ssh.key" >> hosts`
 
+provision your instance with your SSH public key and add the key to your SSH agent
+
 run ansible playbook
 `ansible-playbook --inventory-file=hosts provision-cloud-instance.yml`
