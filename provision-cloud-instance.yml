@@ -115,7 +115,7 @@
         append: yes
 
     - name: Create SSH directory
-      ansible.builtin.command: mkdir /home/{{ user }}/.ssh
+      ansible.builtin.command: mkdir -p /home/{{ user }}/.ssh
 
     - name: Copy authorized_keys from provisioned user
       ansible.builtin.copy:
