@@ -161,6 +161,7 @@
       ansible.builtin.wait_for_connection:
         timeout: 300
         delay: 10
+
   pre_tasks:
     - name: Install curl if not present
       ansible.builtin.apt:
