@@ -35,13 +35,13 @@
       community.general.snap:
         name: nano
         classic: true
-      when: arch is "arm64"
+      when: arch == "arm64"
 
     - name: Install nano
       ansible.builtin.apt:
         name: nano
         state: present
-      when: arch is not "arm64"
+      when: arch != "arm64"
 
     - name: Install kitty-terminfo
       ansible.builtin.apt:
@@ -107,10 +107,15 @@
     - name: Add main user
       ansible.builtin.user:
         name: "{{ user }}"
-        group: sudo
+
+    - name: Add main user
+      ansible.builtin.user:
+        name: "{{ user }}"
+        groups: sudo
+        append: yes
 
     - name: Create SSH directory
-      ansible.builtin.command: mkdir -p /home/{{ user }}/.ssh
+      ansible.builtin.command: mkdir /home/{{ user }}/.ssh
 
     - name: Copy authorized_keys from provisioned user
       ansible.builtin.copy:
@@ -137,8 +142,14 @@
     - name: Add github action runner user
       ansible.builtin.user:
         name: github
-        group: docker
-      when: arch is "arm64"
+      when: arch == "arm64"
+
+    - name: Add docker group to github action runner user
+      ansible.builtin.user:
+        name: github
+        groups: docker
+        append: yes
+      when: arch == "arm64"
 
     - name: Reboot System
       ansible.builtin.reboot:
