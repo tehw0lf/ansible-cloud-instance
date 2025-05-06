@@ -11,7 +11,7 @@ create vars file
 
 create hosts file
 `echo "[cloud_instance]" > hosts`
-`echo "ubuntu ansible_ssh_host=ip_address ansible_user=tehwolf" >> hosts`
+`echo "ubuntu ansible_ssh_host=ip_address ansible_user=ubuntu" >> hosts`
 
 create your instance with your SSH public key and add the key to your SSH agent
 
