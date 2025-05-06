@@ -126,19 +126,6 @@
         mode: "0600"
         remote_src: yes
 
-    - name: Copy SSH configuration
-      ansible.builtin.template:
-        src: files/sshd_config.j2
-        dest: /etc/ssh/sshd_config
-        owner: root
-        group: root
-        mode: "0644"
-
-    - name: Restart SSH service to apply changes
-      ansible.builtin.service:
-        name: sshd
-        state: restarted
-
     - name: Add github action runner user
       ansible.builtin.user:
         name: github
@@ -151,6 +138,21 @@
         append: yes
       when: arch == "arm64"
 
+    - name: Delete default users and remove home directories
+      ansible.builtin.user:
+        name: "{{ item }}"
+        state: absent
+        remove: true
+      loop: "{{ users_to_remove }}"
+
+    - name: Copy SSH configuration
+      ansible.builtin.template:
+        src: files/sshd_config.j2
+        dest: /etc/ssh/sshd_config
+        owner: root
+        group: root
+        mode: "0644"
+
     - name: Reboot System
       ansible.builtin.reboot:
         reboot_timeout: 60
@@ -159,14 +161,6 @@
       ansible.builtin.wait_for_connection:
         timeout: 300
         delay: 10
-
-    - name: Delete default users and remove home directories
-      ansible.builtin.user:
-        name: "{{ item }}"
-        state: absent
-        remove: true
-      loop: "{{ users_to_remove }}"
-
   pre_tasks:
     - name: Install curl if not present
       ansible.builtin.apt:
