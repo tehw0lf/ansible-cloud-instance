@@ -9,7 +9,7 @@
 
   tasks:
     - name: Remove old known hosts entries by IP
-      ansible.builtin.command: sed '/^{{ instance_ip }}/d' -i /home/{{ user }}/.ssh/known_hosts
+      ansible.builtin.command: sed '/^{{ instance_ip }}/d' -i /home/{{ main_user }}/.ssh/known_hosts
 
 - name: Initial Setup + Unattended Upgrades + Docker
   hosts: cloud_instance
@@ -106,23 +106,23 @@
 
     - name: Add main user
       ansible.builtin.user:
-        name: "{{ user }}"
+        name: "{{ main_user }}"
 
-    - name: Add main user
+    - name: Add main user to sudo group
       ansible.builtin.user:
-        name: "{{ user }}"
+        name: "{{ main_user }}"
         groups: sudo
         append: yes
 
     - name: Create SSH directory
-      ansible.builtin.command: mkdir -p /home/{{ user }}/.ssh
+      ansible.builtin.command: mkdir -p /home/{{ main_user }}/.ssh
 
     - name: Copy authorized_keys from provisioned user
       ansible.builtin.copy:
         src: /home/{{ default_user }}/.ssh/authorized_keys
-        dest: /home/{{ user }}/.ssh/authorized_keys
-        owner: "{{ user }}"
-        group: "{{ user }}"
+        dest: /home/{{ main_user }}/.ssh/authorized_keys
+        owner: "{{ main_user }}"
+        group: "{{ main_user }}"
         mode: "0600"
         remote_src: yes
 
@@ -138,20 +138,30 @@
         append: yes
       when: arch == "arm64"
 
-    - name: Delete default users and remove home directories
-      ansible.builtin.user:
-        name: "{{ item }}"
-        state: absent
-        remove: true
-      loop: "{{ users_to_remove }}"
-
-    - name: Copy SSH configuration
+    - name: Copy SSH configuration to /tmp
       ansible.builtin.template:
         src: files/sshd_config.j2
+        dest: /tmp/sshd_config
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Verify SSH configuration
+      ansible.builtin.command: sshd -t -f /tmp/sshd_config
+
+    - name: Copy SSH configuration to /etc
+      ansible.builtin.copy:
+        src: /tmp/sshd_config
         dest: /etc/ssh/sshd_config
         owner: root
         group: root
         mode: "0644"
+        remote_src: yes
+
+    - name: Restart SSH service to apply changes
+      ansible.builtin.service:
+        name: ssh
+        state: restarted
 
     - name: Reboot System
       ansible.builtin.reboot:
@@ -167,3 +177,21 @@
       ansible.builtin.apt:
         name: curl
         state: present
+
+- name: Remove default users
+  hosts: cloud_instance
+  become: true
+  become_user: root
+  become_method: ansible.builtin.sudo
+  remote_user: "{{ main_user }}"
+  gather_facts: false
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Delete default users and remove home directories
+      ansible.builtin.user:
+        name: "{{ item }}"
+        state: absent
+        remove: true
+      loop: "{{ users_to_remove }}"
