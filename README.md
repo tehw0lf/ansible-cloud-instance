@@ -4,7 +4,6 @@ create vars file
 `echo "arch: arm64" > vars.yml`
 `echo "default_user: ubuntu" > vars.yml`
 `echo "main_user: tehwolf" >> vars.yml`
-`echo "instance_ip: ip_address" >> vars.yml`
 `echo "users_to_remove:" >> vars.yml`
 `echo "  - opc" >> vars.yml`
 `echo "  - ubuntu" >> vars.yml`
