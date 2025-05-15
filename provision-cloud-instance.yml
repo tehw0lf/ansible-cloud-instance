@@ -1,16 +1,4 @@
 ---
-- name: Clear old known hosts
-  hosts: localhost
-  connection: local
-  become: false
-  gather_facts: false
-  vars_files:
-    - vars.yml
-
-  tasks:
-    - name: Remove old known hosts entries by IP
-      ansible.builtin.command: sed '/^{{ instance_ip }}/d' -i /home/{{ main_user }}/.ssh/known_hosts
-
 - name: Initial Setup + Unattended Upgrades + Docker
   hosts: cloud_instance
   become: true
