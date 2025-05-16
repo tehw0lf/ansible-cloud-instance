@@ -16,5 +16,8 @@ create hosts file
 
 create your instance with your SSH public key and add the key to your SSH agent
 
-run ansible playbook
+run first ansible playbook
 `ansible-playbook --inventory-file=hosts provision-cloud-instance.yml`
+
+run second ansible playbook to delete the default users
+`ansible-playbook --inventory-file=hosts remove-default-users.yml`
