@@ -138,7 +138,8 @@
     - name: Reboot System
       ansible.builtin.reboot:
         connect_timeout: 60
-        reboot_timeout: 15
+        reboot_timeout: 5
+      ignore_errors: true
 
   pre_tasks:
     - name: Install curl if not present
