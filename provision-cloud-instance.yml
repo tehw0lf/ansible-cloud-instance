@@ -140,6 +140,7 @@
         connect_timeout: 60
         reboot_timeout: 5
       ignore_errors: true
+      ignore_unreachable: true
 
   pre_tasks:
     - name: Add host key to known_hosts
