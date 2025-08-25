@@ -142,6 +142,14 @@
       ignore_errors: true
 
   pre_tasks:
+    - name: Add host key to known_hosts
+      known_hosts:
+        name: "{{ ansible_ssh_host }}"
+        key: "{{ lookup('pipe', 'ssh-keyscan -t ed25519 ' + ansible_ssh_host) }}"
+        state: present
+      delegate_to: localhost
+      run_once: true
+      become: false
     - name: Install curl if not present
       ansible.builtin.apt:
         name: curl
