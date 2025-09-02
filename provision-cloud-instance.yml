@@ -118,14 +118,14 @@
     - name: Add github action runner user
       ansible.builtin.user:
         name: github
-      when: arch == "arm64"
+      when: arch == "amd64"
 
     - name: Add docker group to github action runner user
       ansible.builtin.user:
         name: github
         groups: docker
         append: yes
-      when: arch == "arm64"
+      when: arch == "amd64"
 
     - name: Template SSH configuration
       ansible.builtin.template:
